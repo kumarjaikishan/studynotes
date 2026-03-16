@@ -111,3 +111,23 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Universal Scrollbar */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* gray */
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

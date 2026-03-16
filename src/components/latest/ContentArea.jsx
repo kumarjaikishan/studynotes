@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Type, Edit3, Trash2 } from "lucide-react";
+import { Code2, Type, Edit3, Trash2, BookOpen, CloudCog } from "lucide-react";
 import CodeWindow from "./CodeWindow";
 import prettier from "prettier/standalone";
 import parserBabel from "prettier/plugins/babel";
@@ -10,25 +10,42 @@ export default function ContentArea({
     sections,
     activeSolutionId,
     setActiveSolutionId,
-
+    user,
     handleDeleteItem,
     setEditingItem,
     setIsItemModalOpen
 }) {
 
+
     if (!currentItem) {
         return (
-            <div className="h-full flex items-center justify-center text-slate-400">
-                Select a topic to start
+            <div className="h-full w-full flex items-center justify-center">
+                <div className="flex flex-col items-center text-center max-w-sm px-6">
+
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-4">
+                        <BookOpen className="text-indigo-500" size={28} />
+                    </div>
+
+                    <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200">
+                        No Topic Selected
+                    </h2>
+
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Choose a section from the sidebar to view the topic and start learning.
+                    </p>
+
+                </div>
             </div>
         );
     }
+
+    const [fontSize, setfontSize] = useState(20)
 
     const handleFormat = async () => {
         if (!currentItem || currentItem.type !== "dsa") return;
 
         const currentCode = currentItem.solutions.find(
-            s => s.id === activeSolutionId
+            s => s._id === activeSolutionId
         )?.code || "";
 
         try {
@@ -42,7 +59,7 @@ export default function ContentArea({
             });
 
             const newSolutions = currentItem.solutions.map(sol =>
-                sol.id === activeSolutionId
+                sol._id === activeSolutionId
                     ? { ...sol, code: formattedCode }
                     : sol
             );
@@ -52,7 +69,7 @@ export default function ContentArea({
             await mockApi.saveItem(updatedItem);
 
             setItems(prev =>
-                prev.map(i => i.id === currentItem.id ? updatedItem : i)
+                prev.map(i => i._id === currentItem._id ? updatedItem : i)
             );
 
         } catch (err) {
@@ -61,12 +78,10 @@ export default function ContentArea({
     };
 
     return (
-        <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-6 lg:p-12 custom-scrollbar">
-
+        <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-2 lg:p-4 custom-scrollbar">
             <AnimatePresence mode="wait">
-
                 <motion.div
-                    key={currentItem.id}
+                    key={currentItem._id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -76,58 +91,62 @@ export default function ContentArea({
                 >
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
-                        <div className="space-y-3">
+                        <div className="space-y-1 w-full text-left ">
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1 ">
 
-                                <span className="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest">
-                                    {sections.find(s => s.id === currentItem.sectionId)?.name}
+                                <span className="px-2 py-[2px] rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-bold uppercase tracking-wide">
+                                    {sections.find(s => s._id === currentItem.sectionId)?.name}
                                 </span>
 
                                 {currentItem.difficulty && (
-                                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${currentItem.difficulty === "Easy"
-                                        ? "text-emerald-500"
-                                        : currentItem.difficulty === "Medium"
-                                            ? "text-amber-500"
-                                            : "text-rose-500"
-                                        }`}>
+                                    <span
+                                        className={`px-2 py-[2px] rounded-md text-[12px] font-bold uppercase tracking-wide ${currentItem.difficulty === "Easy"
+                                            ? "text-emerald-500"
+                                            : currentItem.difficulty === "Medium"
+                                                ? "text-amber-500"
+                                                : "text-rose-500"
+                                            }`}
+                                    >
                                         {currentItem.difficulty}
                                     </span>
                                 )}
 
                             </div>
 
-                            <h1 className="text-4xl font-black dark:text-white">
+                            <div className="text-2xl capitalize font-semibold dark:text-white">
                                 {currentItem.title}
-                            </h1>
+                            </div>
 
-                            <p className="text-slate-500 dark:text-slate-400 text-lg">
+                            <div className="text-slate-500 dark:text-slate-400 text-sm whitespace-pre-wrap">
                                 {currentItem.description}
-                            </p>
+                            </div>
 
                         </div>
 
                         <div className="flex gap-2">
+                            {user?.userId &&
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            setEditingItem(currentItem);
+                                            setIsItemModalOpen(true);
+                                        }}
+                                        className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    >
+                                        <Edit3 size={20} />
+                                    </button>
 
-                            <button
-                                onClick={() => {
-                                    setEditingItem(currentItem);
-                                    setIsItemModalOpen(true);
-                                }}
-                                className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                <Edit3 size={20} />
-                            </button>
-
-                            <button
-                                onClick={() => handleDeleteItem(currentItem.id)}
-                                className="p-3 rounded-xl border border-rose-100 dark:border-rose-900/30 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10"
-                            >
-                                <Trash2 size={20} />
-                            </button>
-
+                                    <button
+                                        onClick={() => handleDeleteItem(currentItem._id)}
+                                        className="p-3 rounded-xl border border-rose-100 dark:border-rose-900/30 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                </>
+                            }
                         </div>
 
                     </div>
@@ -135,17 +154,17 @@ export default function ContentArea({
                     {/* Body */}
                     {currentItem.type === "dsa" ? (
 
-                        <div className="space-y-6">
-
+                        <div className="space-y-4">
                             {/* Solution Tabs */}
                             <div className="flex gap-1.5 p-1 bg-slate-200 dark:bg-slate-800 rounded-2xl w-fit">
 
                                 {currentItem.solutions.map(sol => (
-
                                     <button
-                                        key={sol.id}
-                                        onClick={() => setActiveSolutionId(sol.id)}
-                                        className={`px-5 py-2.5 rounded-xl text-xs font-bold ${activeSolutionId === sol.id
+                                        key={sol._id}
+                                        onClick={() => {
+                                            setActiveSolutionId(sol._id)
+                                        }}
+                                        className={`px-5 py-2.5 rounded-xl text-xs font-bold ${activeSolutionId === sol._id
                                             ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400"
                                             : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                                             }`}
@@ -163,7 +182,7 @@ export default function ContentArea({
                                     <Code2 size={16} className="text-indigo-500" /> Implementation
                                 </div>
                                 <CodeWindow
-                                    code={currentItem.solutions.find(s => s.id === activeSolutionId)?.code || ''}
+                                    code={currentItem.solutions.find(s => s._id === activeSolutionId)?.code || ''}
                                     onFormat={handleFormat}
                                 />
                             </div>
@@ -179,10 +198,10 @@ export default function ContentArea({
                                 Explanation
                             </div>
 
-                            <div className="p-4 text-left rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-lg leading-relaxed dark:text-slate-300 shadow-sm whitespace-pre-wrap">
+                            <div className={`p-4 text-left rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[${fontSize}px] leading-relaxed dark:text-slate-300 shadow-sm whitespace-pre-wrap`}>
                                 {currentItem.answer}
                             </div>
-                           
+
                         </div>
 
                     )}

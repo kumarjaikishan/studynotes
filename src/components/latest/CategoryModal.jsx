@@ -26,7 +26,7 @@ export const AddCategoryModal = ({ isOpen, onClose, onAddCategory }) => {
       >
 
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
 
           <h2 className="text-xl font-bold dark:text-white">
             Add Category
@@ -42,7 +42,7 @@ export const AddCategoryModal = ({ isOpen, onClose, onAddCategory }) => {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-5">
+        <div className="p-4 space-y-5">
 
           <div>
             <label className="text-xs font-bold text-slate-500 uppercase block mb-1.5">
@@ -61,7 +61,7 @@ export const AddCategoryModal = ({ isOpen, onClose, onAddCategory }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+        <div className="p-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
 
           <button
             onClick={onClose}

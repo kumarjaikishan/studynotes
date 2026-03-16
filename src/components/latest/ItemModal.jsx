@@ -22,30 +22,51 @@ export const ItemModal = ({
     answer: ""
   });
 
+  // useEffect(() => {
+  //   if (editingItem) {
+  //     setData({ ...editingItem });
+  //   } else {
+  //     setData({
+  //       title: "",
+  //       sectionId: sections?.[0]?._id || "",
+  //       category: activeCategory,
+  //       description: "",
+  //       difficulty: "Easy",
+  //       type: sections?.[0]?.type || "dsa",
+  //       solutions: [{ id: "1", label: "Standard", code: "" }],
+  //       answer: ""
+  //     });
+  //   }
+  // }, [editingItem, isOpen, sections, activeCategory]);
+
   useEffect(() => {
-    if (editingItem) {
-      setData({ ...editingItem });
-    } else {
-      setData({
-        title: "",
-        sectionId: sections[0]?.id || "",
-        category: activeCategory,
-        description: "",
-        difficulty: "Easy",
-        type: sections[0]?.type || "dsa",
-        solutions: [{ id: "1", label: "Standard", code: "" }],
-        answer: ""
-      });
-    }
-  }, [editingItem, isOpen, sections, activeCategory]);
+  if (!isOpen) return;
+  console.log(sections)
+
+  if (editingItem) {
+    setData(editingItem);
+  } else {
+    setData({
+      title: "",
+      sectionId: sections?.[0]?._id || "",
+      category: activeCategory,
+      description: "",
+      difficulty: "Easy",
+      type: sections?.[0]?.type || "dsa",
+      solutions: [{ _id: crypto.randomUUID(), label: "Standard", code: "" }],
+      answer: ""
+    });
+  }
+}, [isOpen, editingItem]);
 
   if (!isOpen) return null;
 
   const handleSolutionChange = (id, field, value) => {
+    // console.log(id, field, value)
     setData({
       ...data,
       solutions: data.solutions.map(s =>
-        s.id === id ? { ...s, [field]: value } : s
+        s._id === id ? { ...s, [field]: value } : s
       )
     });
   };
@@ -74,13 +95,14 @@ export const ItemModal = ({
       >
 
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
 
           <h2 className="text-xl font-bold dark:text-white flex items-center gap-2">
             {editingItem
               ? <Edit3 size={20} className="text-indigo-500" />
               : <Plus size={20} className="text-indigo-500" />}
-            {editingItem ? "Edit" : "Add"} to {activeCategory.toUpperCase()}
+            {/* {editingItem ? "Edit" : "Add"} to {activeCategory.toUpperCase()} */}
+            {editingItem ? "Edit" : "Add"}
           </h2>
 
           <button
@@ -93,7 +115,7 @@ export const ItemModal = ({
         </div>
 
         {/* Body */}
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 custom-scrollbar">
+        <div className="p-4 overflow-y-auto space-y-5 flex-1 custom-scrollbar">
 
           {/* Title + Section */}
           <div className="grid grid-cols-2 gap-4">
@@ -121,7 +143,7 @@ export const ItemModal = ({
               <select
                 value={data.sectionId}
                 onChange={e => {
-                  const sec = sections.find(s => s.id === e.target.value);
+                  const sec = sections.find(s => s._id === e.target.value);
                   setData({
                     ...data,
                     sectionId: e.target.value,
@@ -132,7 +154,7 @@ export const ItemModal = ({
               >
 
                 {sections.map(s => (
-                  <option key={s.id} value={s.id}>
+                  <option key={s._id} value={s._id}>
                     {s.name}
                   </option>
                 ))}
@@ -181,7 +203,7 @@ export const ItemModal = ({
               {data.solutions.map(sol => (
 
                 <div
-                  key={sol.id}
+                  key={sol._id}
                   className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-3"
                 >
 
@@ -190,7 +212,7 @@ export const ItemModal = ({
                     <input
                       value={sol.label}
                       onChange={e =>
-                        handleSolutionChange(sol.id, "label", e.target.value)
+                        handleSolutionChange(sol._id, "label", e.target.value)
                       }
                       className="bg-transparent font-bold dark:text-white outline-none text-sm border-b border-indigo-500/20 focus:border-indigo-500"
                       placeholder="Label"
@@ -202,7 +224,7 @@ export const ItemModal = ({
                           setData({
                             ...data,
                             solutions: data.solutions.filter(
-                              s => s.id !== sol.id
+                              s => s._id !== sol._id
                             )
                           })
                         }
@@ -217,7 +239,7 @@ export const ItemModal = ({
                   <textarea
                     value={sol.code}
                     onChange={e =>
-                      handleSolutionChange(sol.id, "code", e.target.value)
+                      handleSolutionChange(sol._id, "code", e.target.value)
                     }
                     rows={6}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white font-mono text-sm outline-none focus:ring-1 focus:ring-indigo-500"
@@ -253,7 +275,7 @@ export const ItemModal = ({
         </div>
 
         {/* Footer */}
-        <div className="p-6 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex gap-3 justify-end">
+        <div className="p-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex gap-3 justify-end">
 
           <button
             onClick={onClose}

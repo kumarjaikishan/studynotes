@@ -1,18 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Sun, Moon, Plus, Search, Code2, Copy, Check,
-  Trash2, ChevronRight, Terminal, BookOpen,
-  Sparkles, Edit3, Type, Layers, MoreVertical, X,
-  FileText, Code, LogIn, LogOut, LayoutGrid, Cpu, Globe, Database
-} from 'lucide-react';
-
+import { useState, useMemo, useEffect } from 'react';
 import { ItemModal } from "./components/latest/ItemModal";
-import { ManageSectionModal } from "./components/latest/ManageSectionModal";
-import { motion, AnimatePresence } from 'framer-motion';
+import { ManageSectionModal } from "./components/latest/SectionModal";
 import Sidebar from './components/latest/Sidebar';
 import Navbar from './components/latest/Navbar';
 import ContentArea from "./components/latest/ContentArea";
-import { INITIAL_SECTIONS, INITIAL_ITEMS } from "./components/latest/sampleData";
+import toast from "react-hot-toast";
 import { LoginModal } from './components/latest/LoginModal';
 import { mockApianother } from './components/latest/mockApi';
 import { AddCategoryModal } from './components/latest/CategoryModal';
@@ -22,11 +14,11 @@ import { AddCategoryModal } from './components/latest/CategoryModal';
 const mockApi = {
   fetchSections: async () => {
     // Simulate GET /api/sections
-    return new Promise(resolve => setTimeout(() => resolve(INITIAL_SECTIONS), 500));
+    // return new Promise(resolve => setTimeout(() => resolve(INITIAL_SECTIONS), 500));
   },
   fetchItems: async () => {
     // Simulate GET /api/items
-    return new Promise(resolve => setTimeout(() => resolve(INITIAL_ITEMS), 500));
+    // return new Promise(resolve => setTimeout(() => resolve(INITIAL_ITEMS), 500));
   },
   saveItem: async (item) => {
     // Simulate POST or PATCH /api/items
@@ -49,23 +41,16 @@ const mockApi = {
 
 export default function App() {
   const [theme, setTheme] = useState('dark');
-  const [showLogin, setShowLogin] = useState(true)
+  const [showLogin, setShowLogin] = useState(false)
   const [user, setUser] = useState(null);
   const [sections, setSections] = useState([]);
   const [items, setItems] = useState([]);
-  const [activeCategory, setActiveCategory] = useState('dsa');
+  const [activeCategory, setActiveCategory] = useState(null);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [activeSolutionId, setActiveSolutionId] = useState(null);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  // const [categories, setcategories] = useState(null);
-
-    const categories = [
-    { id: 'dsa', name: 'DSA', icon: Cpu },
-    { id: 'html', name: 'HTML', icon: Globe },
-    { id: 'js', name: 'JS', icon: Terminal },
-    { id: 'react', name: 'React', icon: Database },
-  ];
+  const [categories, setcategories] = useState(null);
 
 
   // Modal States
@@ -78,7 +63,8 @@ export default function App() {
 
   const handleAddCategory = async (name) => {
     try {
-      let res = await mockApianother.addCategory(name)
+      let res = await mockApianother.addCategory(name);
+        toast.success("Category Added");
     } catch (error) {
       console.log(error)
     }
@@ -86,27 +72,18 @@ export default function App() {
 
   // --- Initial Data Fetching (Demo API calls) ---
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedCatergory = await mockApianother.getCategory();
-        const fetchedSections = await mockApi.fetchSections();
-        const fetchedItems = await mockApi.fetchItems();
-        setSections(fetchedSections);
-        setItems(fetchedItems);
-        if (fetchedItems.length > 0) {
-          setSelectedItemId(fetchedItems[0].id);
-        }
-        setcategories(fetchedCatergory.data)
-        // console.log("fetchedCatergory", fetchedCatergory)
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadData();
   }, []);
+
+  useEffect(() => {
+    let user = JSON.parse(localStorage.getItem('notesUser'));
+    if (user) setUser(user)
+  }, []);
+
+  function logout() {
+    localStorage.removeItem('notesUser');
+    setUser(null)
+  }
 
   // Theme Sync
   useEffect(() => {
@@ -129,38 +106,94 @@ export default function App() {
     );
   }, [items, search, activeCategory]);
 
+
   const currentItem = useMemo(() =>
-    items.find(i => i.id === selectedItemId) || filteredItems[0] || null
+    items.find(i => i._id === selectedItemId) || filteredItems[0] || null
     , [items, selectedItemId, filteredItems]);
 
+
   useEffect(() => {
+    // console.log(currentItem?.solutions[0])
     if (currentItem?.solutions?.length > 0) {
-      if (!activeSolutionId || !currentItem.solutions.find(s => s.id === activeSolutionId)) {
-        setActiveSolutionId(currentItem.solutions[0].id);
+      if (!activeSolutionId || !currentItem.solutions.find(s => s._id === activeSolutionId)) {
+        setActiveSolutionId(currentItem.solutions[0]._id);
       }
     }
   }, [currentItem]);
+
+  const loadData = async () => {
+    setIsLoading(true);
+
+    try {
+
+      const fetchedCatergory = await mockApianother.getCategory();
+
+      const newCategories = fetchedCatergory.data.categories;
+      const newSections = fetchedCatergory.data.sections;
+      const newItems = fetchedCatergory.data.items;
+
+      setcategories(newCategories);
+      setSections(newSections);
+      setItems(newItems);
+
+      // ---- CATEGORY ----
+      if (activeCategory) {
+        const stillExists = newCategories.find(c => c._id === activeCategory);
+        if (!stillExists && newCategories.length > 0) {
+          setActiveCategory(newCategories[0]._id);
+        }
+      } else if (newCategories.length > 0) {
+        setActiveCategory(newCategories[0]._id);
+      }
+
+      // ---- ITEM ----
+      if (selectedItemId) {
+        const stillExists = newItems.find(i => i._id === selectedItemId);
+        if (!stillExists && newItems.length > 0) {
+          setSelectedItemId(newItems[0]._id);
+        }
+      } else if (newItems.length > 0) {
+        setSelectedItemId(newItems[0]._id);
+      }
+
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // --- Handlers ---
   const handleToggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   const handleSaveSection = async (data) => {
-    const savedSection = await mockApi.saveSection(editingSection ? { ...editingSection, ...data } : data);
-    if (editingSection) {
-      setSections(prev => prev.map(s => s.id === editingSection.id ? savedSection : s));
-    } else {
-      setSections(prev => [...prev, savedSection]);
+    let { category, name, type } = data;
+
+    try {
+      let res;
+      if (editingSection) {
+        // console.log(editingSection)
+        let sectionId = editingSection._id;
+        res = await mockApianother.editsection({ category, name, type, sectionId })
+      } else {
+        res = await mockApianother.addsection(category, name, type)
+      }
+      loadData()
+    } catch (error) {
+      console.log(error)
     }
+
     setIsSectionModalOpen(false);
     setEditingSection(null);
   };
 
   const handleDeleteSection = async (id) => {
     if (confirm("Are you sure? This will delete the section.")) {
-      await mockApi.deleteSection(id);
-      setSections(prev => prev.filter(s => s.id !== id));
-      setItems(prev => prev.filter(i => i.sectionId !== id));
+      let res = await mockApianother.deletesection({ sectionId: id })
+
+      loadData()
     }
+
   };
 
   const loginapi = async (data) => {
@@ -169,40 +202,56 @@ export default function App() {
       let res = await mockApianother.login(email, password);
       // console.log(res)
       setUser(res);
+      localStorage.setItem('notesUser', JSON.stringify(res))
       setShowLogin(false)
-      alert('Login Successfull')
+      // alert('Login Successfull')
+      toast.success("Login successful 🎉");
     } catch (error) {
+      toast.error(error.message);
       console.log(error)
     }
   }
 
   const handleSaveItem = async (data) => {
-    const savedItem = await mockApi.saveItem(editingItem ? { ...editingItem, ...data } : data);
-    if (editingItem) {
-      setItems(prev => prev.map(i => i.id === editingItem.id ? savedItem : i));
-    } else {
-      setItems(prev => [...prev, savedItem]);
-      setSelectedItemId(savedItem.id);
+    try {
+      let res;
+      if (editingItem) {
+        // console.log(editingItem)
+        let itemId = editingItem._id
+        res = await mockApianother.edititems(data, itemId)
+        toast.success("Edited Successfully");
+      } else {
+        res = await mockApianother.additems(data)
+        toast.success("Added Successfully");
+      }
+
+      loadData()
+    } catch (error) {
+      console.log(error)
     }
+
     setIsItemModalOpen(false);
     setEditingItem(null);
   };
 
   const handleDeleteItem = async (id) => {
+
     if (confirm("Delete this entry?")) {
-      await mockApi.deleteItem(id);
-      const nextItems = items.filter(i => i.id !== id);
-      setItems(nextItems);
-      if (nextItems.length > 0) setSelectedItemId(nextItems[0].id);
+      let res = await mockApianother.deleteitem({ itemId: id });
+      toast.success("Deleted Successfully");
+      loadData()
     }
   };
-
+  const activeCatageoryfull = categories?.filter((val)=> {
+    return val._id == activeCategory 
+  })
 
   return (
     <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950">
       <Navbar
         theme={theme}
         user={user}
+        logout={logout}
         setUser={setUser}
         setShowLogin={setShowLogin}
         handleToggleTheme={handleToggleTheme}
@@ -217,11 +266,12 @@ export default function App() {
       />
 
       <div className="flex h-[calc(100vh-64px)] overflow-hidden">
-
         <Sidebar
           isLoading={isLoading}
           search={search}
+          user={user}
           setSearch={setSearch}
+          setIsItemModalOpen={setIsItemModalOpen}
           filteredSections={filteredSections}
           filteredItems={filteredItems}
           selectedItemId={selectedItemId}
@@ -229,18 +279,19 @@ export default function App() {
           setEditingSection={setEditingSection}
           setIsSectionModalOpen={setIsSectionModalOpen}
           handleDeleteSection={handleDeleteSection}
+          categoryName ={activeCatageoryfull }
         />
 
         <ContentArea
           currentItem={currentItem}
           sections={sections}
+          user={user}
           activeSolutionId={activeSolutionId}
           setActiveSolutionId={setActiveSolutionId}
           handleDeleteItem={handleDeleteItem}
           setEditingItem={setEditingItem}
           setIsItemModalOpen={setIsItemModalOpen}
         />
-
       </div>
 
       <ItemModal
@@ -258,6 +309,7 @@ export default function App() {
         onSave={handleSaveSection}
         section={editingSection}
         category={activeCategory}
+        categoryName ={activeCatageoryfull }
       />
 
       <LoginModal

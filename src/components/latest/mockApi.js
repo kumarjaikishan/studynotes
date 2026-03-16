@@ -17,10 +17,10 @@ export const mockApianother = {
                 })
             });
 
-            //   if (!response.ok) {
-            //     throw new Error("Login failed");
-            //   }
-          
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
+
             const data = await response.json();
             //   console.log("login data", data)
             localStorage.setItem("token", data?.token)
@@ -32,7 +32,8 @@ export const mockApianother = {
         }
     },
 
-    addCategory: async (name) => {
+    addCategory: async function (name) {
+
         // console.log("idhar api me", email, password)
         try {
             let token = localStorage.getItem("token");
@@ -48,12 +49,12 @@ export const mockApianother = {
                 })
             });
 
-            //   if (!response.ok) {
-            //     throw new Error("Login failed");
-            //   }
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
 
             const data = await response.json();
-              console.log("add category", data)
+            console.log("add category", data)
             return data;
 
         } catch (error) {
@@ -62,7 +63,7 @@ export const mockApianother = {
         }
     },
 
-    getCategory: async (name) => {
+    getCategory: async function (name) {
         // console.log("idhar api me", email, password)
         try {
             let token = localStorage.getItem("token");
@@ -75,11 +76,12 @@ export const mockApianother = {
                 credentials: "include", // important for cookies / sessions
             });
 
-            //   if (!response.ok) {
-            //     throw new Error("Login failed");
-            //   }
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
 
             const data = await response.json();
+            // console.log("getcateogy", data)
             return data;
 
         } catch (error) {
@@ -87,10 +89,192 @@ export const mockApianother = {
             throw error;
         }
     },
-    fetchSections: async () => { },
-    fetchItems: async () => { },
-    saveItem: async (item) => { },
-    deleteItem: async (id) => { },
-    saveSection: async (section) => { },
-    deleteSection: async (id) => { }
+
+    addsection: async function (category, name, type) {
+        // console.log("idhar api me", email, password)
+        try {
+            let token = localStorage.getItem("token");
+            const response = await fetch(`${baseurl}section`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include", // important for cookies / sessions
+                body: JSON.stringify({
+                    category, name, type
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
+
+            const data = await response.json();
+            // console.log("add section", data)
+            return data;
+
+        } catch (error) {
+            console.error("Login error:", error.message);
+            throw error;
+        }
+    },
+
+    editsection: async function ({ category, name, type, sectionId }) {
+        try {
+
+            let token = localStorage.getItem("token");
+
+            const response = await fetch(`${baseurl}section/${sectionId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    category,
+                    name,
+                    type
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
+
+            const data = await response.json();
+            console.log("update section", data);
+
+            return data;
+
+        } catch (error) {
+            console.error("Edit section error:", error.message);
+            throw error;
+        }
+    },
+
+    deletesection: async function ({ sectionId }) {
+        try {
+
+            let token = localStorage.getItem("token");
+
+            const response = await fetch(`${baseurl}section/${sectionId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
+            const data = await response.json();
+
+            // console.log("deleted section", data);
+
+            return data;
+
+        } catch (error) {
+            console.error("Edit section error:", error.message);
+            throw error;
+        }
+    },
+
+    additems: async function (data) {
+        // console.log(data)
+        let { answer, category, description, difficulty, sectionId, solutions, title, type } = data;
+        console.log(answer, category, description, difficulty, sectionId, solutions, title, type)
+
+        try {
+            let token = localStorage.getItem("token");
+            const response = await fetch(`${baseurl}item`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include", // important for cookies / sessions
+                body: JSON.stringify({
+                    answer, category, description, difficulty, sectionId, solutions, title, type
+                })
+            });
+
+             if (!response.ok) {
+                throw new Error("Failed");
+              }
+
+            const data = await response.json();
+            // console.log("additems", data)
+            return data;
+
+        } catch (error) {
+            console.error("Login error:", error.message);
+            throw error;
+        }
+    },
+
+    edititems: async function (data, itemId) {
+        let { answer, category, description, difficulty, sectionId, solutions, title, type } = data;
+        try {
+
+            let token = localStorage.getItem("token");
+
+            const response = await fetch(`${baseurl}item/${itemId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    answer, category, description, difficulty, sectionId, solutions, title, type
+                })
+            });
+
+             if (!response.ok) {
+                throw new Error("Failed");
+              }
+
+            const data = await response.json();
+            console.log("update item", data);
+
+            return data;
+
+        } catch (error) {
+            console.error("Edit section error:", error.message);
+            throw error;
+        }
+    },
+
+    deleteitem: async function ({ itemId }) {
+        try {
+
+            let token = localStorage.getItem("token");
+
+            const response = await fetch(`${baseurl}item/${itemId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : "",
+                },
+                credentials: "include",
+            });
+
+             if (!response.ok) {
+                throw new Error("Failed");
+              }
+
+            const data = await response.json();
+            // console.log("item deleted", data);
+
+            return data;
+
+        } catch (error) {
+            console.error("Edit section error:", error.message);
+            throw error;
+        }
+    },
 }
