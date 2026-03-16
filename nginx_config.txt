@@ -1,22 +1,24 @@
-   server_name accusoft.battlefiesta.in www.accusoft.battlefiesta.in;
+server {
+    listen 80;
+    server_name notes.battlefiesta.in www.notes.battlefiesta.in;
 
-    root /var/www/accusoft;
+    root /var/www/studynotes;
     index index.html;
 
-    access_log /var/log/nginx/accusoft_access.log;
-    error_log /var/log/nginx/accusoft_error.log;
+    access_log /var/log/nginx/studynotes_access.log;
+    error_log /var/log/nginx/studynotes_error.log;
 
-     location ~* \.(js|css|png|jpg|jpeg|svg|woff2?|ttf|ico)$ {
-         limit_req zone=staticzone burst=8 nodelay;
-         try_files $uri =404;
-     }
-
-    location / {
-        limit_req zone=mylimit burst=3 nodelay;
-        try_files $uri /index.html;
-        # try_files $uri $uri/ =404;
+    # Static files
+    location ~* \.(js|css|png|jpg|jpeg|svg|woff2?|ttf|ico)$ {
+        try_files $uri =404;
     }
 
+    # React / SPA routing
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # API proxy (same backend)
     location /api {
         proxy_pass http://127.0.0.1:5000/api;
         proxy_http_version 1.1;
@@ -25,3 +27,4 @@
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
+}

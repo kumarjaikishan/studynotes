@@ -47,9 +47,9 @@ export default function Navbar({
             <BookOpen size={18} />
           </div>
 
-          <h1 className="text-sm font-black dark:text-white uppercase tracking-tight">
+          <p className="text-lg font-black dark:text-white uppercase tracking-tight">
             Notes
-          </h1>
+          </p>
         </div>
       </div>
 
