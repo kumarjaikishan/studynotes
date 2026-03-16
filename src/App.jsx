@@ -1,13 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ItemModal } from "./components/latest/ItemModal";
-import { ManageSectionModal } from "./components/latest/SectionModal";
-import Sidebar from './components/latest/Sidebar';
-import Navbar from './components/latest/Navbar';
-import ContentArea from "./components/latest/ContentArea";
+import { ItemModal } from "./components/ItemModal";
+import { ManageSectionModal } from "./components/SectionModal";
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
+import ContentArea from "./components/ContentArea";
 import toast from "react-hot-toast";
-import { LoginModal } from './components/latest/LoginModal';
-import { mockApianother } from './components/latest/mockApi';
-import { AddCategoryModal } from './components/latest/CategoryModal';
+import { LoginModal } from './components/LoginModal';
+import { mockApianother } from './components/mockApi';
+import { AddCategoryModal } from './components/CategoryModal';
 
 
 // --- Mock API Service (Simulating Node.js backend calls) ---

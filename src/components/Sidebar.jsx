@@ -77,7 +77,7 @@ const Sidebar = ({
                 {/* Section Header */}
                 <div className="flex items-center justify-between px-3 py-1 group">
 
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                  <span className="text-[12px]  font-black uppercase text-slate-400 tracking-widest">
                     {section.name}
                   </span>
 
@@ -146,7 +146,7 @@ const Sidebar = ({
                       ? <Code size={14} />
                       : <FileText size={14} />}
 
-                    <span className="text-xs font-semibold truncate flex-1">
+                    <span className="text-xs capitalize font-semibold truncate flex-1">
                       {item.title}
                     </span>
 

@@ -1,4 +1,4 @@
-import { baseurl } from "../../config";
+import { baseurl } from "../config";
 
 
 export const mockApianother = {

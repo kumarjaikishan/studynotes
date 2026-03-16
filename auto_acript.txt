@@ -7,7 +7,7 @@ cd /home/ubuntu/studynotes || exit
 echo "Pulling latest changes..."
 git pull
 
-echo "Syncing frontend dist/ to /var/www/accusoft..."
+echo "Syncing frontend dist/ to /var/www/studynotes..."
 sudo rsync -av --delete dist/ /var/www/studynotes/
 
 echo "Deployment finished successfully!"
