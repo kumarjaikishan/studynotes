@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code2, Type, Edit3, Trash2, BookOpen, CloudCog } from "lucide-react";
+import { Code2, Type, Edit3, Trash2, BookOpen, CloudCog, Share2, Heart, Github, Linkedin, Globe } from "lucide-react";
 import CodeWindow from "./CodeWindow";
 import prettier from "prettier/standalone";
 import parserBabel from "prettier/plugins/babel";
+import toast from "react-hot-toast";
 
 export default function ContentArea({
     currentItem,
@@ -40,6 +41,28 @@ export default function ContentArea({
     }
 
     const [fontSize, setfontSize] = useState(20)
+
+    const handleShare = async () => {
+        const urlToShare = window.location.href;
+        
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: currentItem.title,
+                    text: `Check out this topic: ${currentItem.title}`,
+                    url: urlToShare
+                });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    navigator.clipboard.writeText(urlToShare);
+                    toast.success("Link copied to clipboard!");
+                }
+            }
+        } else {
+            navigator.clipboard.writeText(urlToShare);
+            toast.success("Link copied to clipboard!");
+        }
+    };
 
     const handleFormat = async () => {
         if (!currentItem || currentItem.type !== "dsa") return;
@@ -178,8 +201,16 @@ export default function ContentArea({
 
                             {/* Code */}
                             <div className="space-y-4 text-left">
-                                <div className="flex items-center gap-2 text-sm font-black uppercase text-slate-400 tracking-widest justify-start">
-                                    <Code2 size={16} className="text-indigo-500" /> Implementation
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-sm font-black uppercase text-slate-400 tracking-widest justify-start">
+                                        <Code2 size={16} className="text-indigo-500" /> Implementation
+                                    </div>
+                                    <button
+                                        onClick={handleShare}
+                                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm"
+                                    >
+                                        <Share2 size={14} /> Share
+                                    </button>
                                 </div>
                                 <CodeWindow
                                     code={currentItem.solutions.find(s => s._id === activeSolutionId)?.code || ''}
@@ -193,18 +224,49 @@ export default function ContentArea({
 
                         <div className="space-y-4">
 
-                            <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-400 tracking-widest">
-                                <Type size={16} className="text-indigo-500" />
-                                Explanation
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-400 tracking-widest">
+                                    <Type size={16} className="text-indigo-500" />
+                                    Explanation
+                                </div>
+                                <button
+                                    onClick={handleShare}
+                                    className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm"
+                                >
+                                    <Share2 size={14} /> Share
+                                </button>
                             </div>
 
-                            <div className={`p-4 text-left rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[${fontSize}px] leading-relaxed dark:text-slate-300 shadow-sm whitespace-pre-wrap`}>
-                                {currentItem.answer}
+                            <div className={`relative p-6 pl-8 text-left rounded-xl border border-slate-200 dark:border-slate-800/60 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950/80 shadow-md whitespace-pre-wrap overflow-hidden`}>
+                                {/* Decorative Left Border */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-500 rounded-l-xl"></div>
+                                <p className={`text-[${fontSize}px] leading-relaxed text-slate-700 dark:text-slate-300 font-medium`}>
+                                    {currentItem.answer}
+                                </p>
                             </div>
 
                         </div>
 
                     )}
+
+                    {/* Footer */}
+                    <div className="mt-8 pt-6 pb-2 fill-slate-200 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-end gap-6 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center gap-1.5">
+                            Made with <Heart size={14} className="text-rose-500 fill-rose-500" /> by Jai Kishan
+                        </div>
+                        <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
+                        <div className="flex items-center gap-4">
+                            <a href="https://github.com/dev-kishan" target="_blank" rel="noreferrer" className="hover:text-indigo-500 transition-colors">
+                                <Github size={16} />
+                            </a>
+                            <a href="https://www.linkedin.com/in/dev-kishan/" target="_blank" rel="noreferrer" className="hover:text-indigo-500 transition-colors">
+                                <Linkedin size={16} />
+                            </a>
+                            <a href="#" target="_blank" rel="noreferrer" title="Portfolio" className="hover:text-indigo-500 transition-colors">
+                                <Globe size={16} />
+                            </a>
+                        </div>
+                    </div>
 
                 </motion.div>
 

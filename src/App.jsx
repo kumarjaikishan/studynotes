@@ -60,6 +60,7 @@ export default function App() {
   const [editingSection, setEditingSection] = useState(null);
 
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleAddCategory = async (name) => {
     try {
@@ -93,6 +94,26 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // URL Sync
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let changed = false;
+    
+    if (activeCategory && urlParams.get('category') !== activeCategory) {
+      urlParams.set('category', activeCategory);
+      changed = true;
+    }
+    if (selectedItemId && urlParams.get('item') !== selectedItemId) {
+      urlParams.set('item', selectedItemId);
+      changed = true;
+    }
+    
+    if (changed) {
+      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [activeCategory, selectedItemId]);
 
   // Derived State
   const filteredSections = useMemo(() =>
@@ -136,21 +157,40 @@ export default function App() {
       setSections(newSections);
       setItems(newItems);
 
+      // ---- URL PARSING ----
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCategory = urlParams.get('category');
+      const urlItem = urlParams.get('item');
+
+      let defaultCategory = activeCategory;
+      if (urlCategory && newCategories.find(c => c._id === urlCategory)) {
+        defaultCategory = urlCategory;
+      }
+
       // ---- CATEGORY ----
-      if (activeCategory) {
-        const stillExists = newCategories.find(c => c._id === activeCategory);
+      if (defaultCategory) {
+        const stillExists = newCategories.find(c => c._id === defaultCategory);
         if (!stillExists && newCategories.length > 0) {
           setActiveCategory(newCategories[0]._id);
+        } else if (stillExists) {
+          setActiveCategory(defaultCategory);
         }
       } else if (newCategories.length > 0) {
         setActiveCategory(newCategories[0]._id);
       }
 
+      let defaultItem = selectedItemId;
+      if (urlItem && newItems.find(i => i._id === urlItem)) {
+        defaultItem = urlItem;
+      }
+
       // ---- ITEM ----
-      if (selectedItemId) {
-        const stillExists = newItems.find(i => i._id === selectedItemId);
+      if (defaultItem) {
+        const stillExists = newItems.find(i => i._id === defaultItem);
         if (!stillExists && newItems.length > 0) {
           setSelectedItemId(newItems[0]._id);
+        } else if (stillExists) {
+          setSelectedItemId(defaultItem);
         }
       } else if (newItems.length > 0) {
         setSelectedItemId(newItems[0]._id);
@@ -247,7 +287,7 @@ export default function App() {
   })
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950">
+    <div className="flex flex-col h-full w-full bg-slate-50 dark:bg-slate-950">
       <Navbar
         theme={theme}
         user={user}
@@ -263,9 +303,11 @@ export default function App() {
         setActiveCategory={setActiveCategory}
         setSearch={setSearch}
         setSelectedItemId={setSelectedItemId}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex flex-1 overflow-hidden w-full relative">
         <Sidebar
           isLoading={isLoading}
           search={search}
@@ -280,6 +322,8 @@ export default function App() {
           setIsSectionModalOpen={setIsSectionModalOpen}
           handleDeleteSection={handleDeleteSection}
           categoryName ={activeCatageoryfull }
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
         />
 
         <ContentArea

@@ -8,7 +8,8 @@ import {
   BookOpen,
   ChevronDown,
   Edit3,
-  Trash2
+  Trash2,
+  Menu
 } from "lucide-react";
 
 export default function Navbar({
@@ -26,7 +27,9 @@ export default function Navbar({
   setSelectedItemId,
   setIsCategoryModalOpen,
   setEditingCategory,
-  handleDeleteCategory
+  handleDeleteCategory,
+  isSidebarOpen,
+  setIsSidebarOpen
 }) {
 
   const [open, setOpen] = useState(false);
@@ -36,10 +39,17 @@ export default function Navbar({
   );
 
   return (
-    <nav className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-50 flex items-center px-6 justify-between">
+    <nav className="h-16 shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-50 flex items-center px-6 justify-between">
 
       {/* LEFT */}
       <div className="flex items-center gap-6">
+        {/* Hamburger */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="md:hidden p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
+        >
+          <Menu size={20} />
+        </button>
 
         {/* Logo */}
         <div className="flex items-center gap-2">

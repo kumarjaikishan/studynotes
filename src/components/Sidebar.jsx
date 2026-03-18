@@ -1,5 +1,5 @@
-import React from "react";
-import { Search, Edit3, Trash2, Code, FileText, Plus } from "lucide-react";
+import React, { useEffect } from "react";
+import { Search, Edit3, Trash2, Code, FileText, Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Sidebar = ({
@@ -16,11 +16,25 @@ const Sidebar = ({
   setSelectedItemId,
   setEditingSection,
   setIsSectionModalOpen,
-  handleDeleteSection
+  handleDeleteSection,
+  isSidebarOpen,
+  setIsSidebarOpen
 }) => {
 
+  const handleItemClick = (id) => {
+    setSelectedItemId(id);
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
-    <aside className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
+    <>
+      <div 
+        className={`fixed inset-0 bg-slate-900/50 z-30 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+        onClick={() => setIsSidebarOpen(false)} 
+      />
+      <aside className={`fixed md:static top-16 md:top-0 bottom-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 overflow-y-auto custom-scrollbar transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
 
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center p-8">
@@ -134,7 +148,7 @@ const Sidebar = ({
 
                   <button
                     key={item._id}
-                    onClick={() => setSelectedItemId(item._id)}
+                    onClick={() => handleItemClick(item._id)}
                     className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 ${
                       selectedItemId === item._id
                         ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
@@ -182,7 +196,8 @@ const Sidebar = ({
 
         </div>
       )}
-    </aside>
+      </aside>
+    </>
   );
 };
 
