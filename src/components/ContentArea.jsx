@@ -262,7 +262,7 @@ export default function ContentArea({
                             <a href="https://www.linkedin.com/in/dev-kishan/" target="_blank" rel="noreferrer" className="hover:text-indigo-500 transition-colors">
                                 <Linkedin size={16} />
                             </a>
-                            <a href="#" target="_blank" rel="noreferrer" title="Portfolio" className="hover:text-indigo-500 transition-colors">
+                            <a href="https://portfolio.battlefiesta.in/" target="_blank" rel="noreferrer" title="Portfolio" className="hover:text-indigo-500 transition-colors">
                                 <Globe size={16} />
                             </a>
                         </div>
