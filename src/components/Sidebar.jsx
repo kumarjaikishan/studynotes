@@ -148,6 +148,7 @@ const Sidebar = ({
 
                   <button
                     key={item._id}
+                    title={item.title}
                     onClick={() => handleItemClick(item._id)}
                     className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 ${
                       selectedItemId === item._id

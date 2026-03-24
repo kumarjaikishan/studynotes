@@ -216,6 +216,7 @@ export default function Home() {
       setShowLogin(false)
       // alert('Login Successfull')
       toast.success("Login successful 🎉");
+      
     } catch (error) {
       toast.error(error.message);
       console.log(error)
