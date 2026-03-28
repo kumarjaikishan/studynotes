@@ -49,8 +49,24 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem('notesUser'));
-    if (user) setUser(user)
+    const storedUser = localStorage.getItem('notesUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        const currentTime = Date.now();
+        const sessionTimeout = 5 * 1000; // 5 seconds for testing
+
+        if (user.loginTimestamp && (currentTime - user.loginTimestamp > sessionTimeout)) {
+          localStorage.removeItem('notesUser');
+          setUser(null);
+          toast.error("Session expired. Please login again.");
+        } else {
+          setUser(user);
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
   }, []);
 
   function logout() {
@@ -212,10 +228,11 @@ export default function Home() {
     let { email, password } = data
     try {
       let res = await mockApianother.login(email, password);
-      // console.log(res)
-      setUser(res);
-      localStorage.setItem('notesUser', JSON.stringify(res))
-      setShowLogin(false)
+      // Add login timestamp for session management
+      const userWithTimestamp = { ...res, loginTimestamp: Date.now() };
+      setUser(userWithTimestamp);
+      localStorage.setItem('notesUser', JSON.stringify(userWithTimestamp));
+      setShowLogin(false);
       // alert('Login Successfull')
       toast.success("Login successful 🎉");
       
