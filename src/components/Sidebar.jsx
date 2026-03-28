@@ -18,7 +18,8 @@ const Sidebar = ({
   setIsSectionModalOpen,
   handleDeleteSection,
   isSidebarOpen,
-  setIsSidebarOpen
+  setIsSidebarOpen,
+  setIsExportPDFModalOpen
 }) => {
 
   const handleItemClick = (id) => {
@@ -57,6 +58,17 @@ const Sidebar = ({
               placeholder={`Search in ${categoryName?.[0].name}...`}
               className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs dark:text-white focus:ring-1 focus:ring-indigo-500 outline-none"
             />
+          </div>
+
+          {/* Export PDF Button */}
+          <div className="px-1">
+            <button
+              onClick={() => setIsExportPDFModalOpen(true)}
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98]"
+            >
+              <FileText size={14} />
+              Export Category as PDF
+            </button>
           </div>
 
           {/* Empty Sections */}

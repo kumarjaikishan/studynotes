@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { LoginModal } from '../components/LoginModal';
 import { mockApianother } from '../services/mockApi';
 import { AddCategoryModal } from '../components/CategoryModal';
+import { ExportPDFModal } from '../components/ExportPDFModal';
 
 export default function Home() {
   const [theme, setTheme] = useState('dark');
@@ -31,6 +32,7 @@ export default function Home() {
 
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isExportPDFModalOpen, setIsExportPDFModalOpen] = useState(false);
 
   const handleAddCategory = async (name) => {
     try {
@@ -295,6 +297,7 @@ export default function Home() {
           categoryName ={activeCatageoryfull }
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
+          setIsExportPDFModalOpen={setIsExportPDFModalOpen}
         />
 
         <ContentArea
@@ -337,6 +340,13 @@ export default function Home() {
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         onAddCategory={handleAddCategory}
+      />
+
+      <ExportPDFModal
+        isOpen={isExportPDFModalOpen}
+        onClose={() => setIsExportPDFModalOpen(false)}
+        items={filteredItems}
+        categoryName={activeCatageoryfull?.[0]?.name || "Category"}
       />
 
     </div>
