@@ -50,11 +50,12 @@ export default function Home() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('notesUser');
+    console.log("storedUser",storedUser)
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         const currentTime = Date.now();
-        const sessionTimeout = 5 * 1000; // 5 seconds for testing
+        const sessionTimeout =  1000 * 60 * 15 ; // 5 seconds for testing
 
         if (user.loginTimestamp && (currentTime - user.loginTimestamp > sessionTimeout)) {
           localStorage.removeItem('notesUser');

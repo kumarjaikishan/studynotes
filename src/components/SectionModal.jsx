@@ -6,8 +6,8 @@ export const ManageSectionModal = ({ isOpen, onClose, onSave, section = null,cat
   const [type, setType] = useState(section?.type || 'dsa');
 
   useEffect(() => {
-    console.log(section)
-    console.log(category)
+    // console.log(section)
+    // console.log(category)
     if (section) {
       setName(section.name);
       setType(section.type);
