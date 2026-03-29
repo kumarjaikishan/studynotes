@@ -56,8 +56,18 @@ const Sidebar = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Search in ${categoryName?.[0].name}...`}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs dark:text-white focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full pl-10 pr-10 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs dark:text-white focus:ring-1 focus:ring-indigo-500 outline-none"
             />
+
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                title="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
 
           {/* Export PDF Button */}
