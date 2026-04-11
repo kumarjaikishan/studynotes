@@ -73,7 +73,7 @@ const CodeWindow = ({ code, onFormat }) => {
 
       {/* Ray.so Style Outer Wrapper */}
       <div 
-        className="w-full rounded-2xl p-6 sm:p-8 md:p-12 transition-all duration-500 ease-in-out shadow-inner"
+        className="w-full rounded-2xl p-6 sm:p-4 md:p-6 transition-all duration-500 ease-in-out shadow-inner"
         style={{ background: currentBackground }}
       >
         {/* Inner Code Window */}
