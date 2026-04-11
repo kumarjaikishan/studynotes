@@ -3,14 +3,14 @@ import { Sparkles, Copy, Check } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 
 const THEMES = {
+  "Sunset": { syntax: themes.nightOwl, bg: "linear-gradient(140deg, rgb(255, 207, 115), rgb(255, 122, 47))", innerBg: "rgba(1, 22, 39, 0.85)" },
+  "Breeze": { syntax: themes.github, bg: "linear-gradient(140deg, rgb(142, 199, 251), rgb(28, 85, 170))", innerBg: "rgba(255, 255, 255, 0.85)" },
   "Dracula": { syntax: themes.dracula, bg: themes.dracula.plain.backgroundColor || "#282a36", innerBg: themes.dracula.plain.backgroundColor || "#282a36" },
   "VS Dark": { syntax: themes.vsDark, bg: themes.vsDark.plain.backgroundColor || "#1e1e1e", innerBg: themes.vsDark.plain.backgroundColor || "#1e1e1e" },
   "Night Owl": { syntax: themes.nightOwl, bg: themes.nightOwl.plain.backgroundColor || "#011627", innerBg: themes.nightOwl.plain.backgroundColor || "#011627" },
   "Okaidia": { syntax: themes.okaidia, bg: themes.okaidia.plain.backgroundColor || "#272822", innerBg: themes.okaidia.plain.backgroundColor || "#272822" },
   "GitHub": { syntax: themes.github, bg: themes.github.plain.backgroundColor || "#f6f8fa", innerBg: themes.github.plain.backgroundColor || "#f6f8fa" },
   "Midnight": { syntax: themes.synthwave84, bg: "linear-gradient(140deg, rgb(165, 142, 251), rgb(233, 191, 248))", innerBg: "rgba(38, 35, 53, 0.85)" },
-  "Sunset": { syntax: themes.nightOwl, bg: "linear-gradient(140deg, rgb(255, 207, 115), rgb(255, 122, 47))", innerBg: "rgba(1, 22, 39, 0.85)" },
-  "Breeze": { syntax: themes.github, bg: "linear-gradient(140deg, rgb(142, 199, 251), rgb(28, 85, 170))", innerBg: "rgba(255, 255, 255, 0.85)" },
   "Cosmic": { syntax: themes.okaidia, bg: "linear-gradient(140deg, rgb(15, 32, 39), rgb(32, 58, 67), rgb(44, 83, 100))", innerBg: "rgba(39, 40, 34, 0.75)" },
   "Aurora": { syntax: themes.dracula, bg: "linear-gradient(140deg, rgb(29, 151, 108), rgb(147, 249, 185))", innerBg: "rgba(40, 42, 54, 0.75)" },
   "Hacker": { syntax: themes.vsDark, bg: "radial-gradient(circle at center, #004d00 0%, #000000 100%)", innerBg: "rgba(30, 30, 30, 0.75)" },
@@ -19,7 +19,7 @@ const THEMES = {
 const CodeWindow = ({ code, onFormat }) => {
   const [copied, setCopied] = useState(false);
   const [activeThemeName, setActiveThemeName] = useState(() => {
-    return localStorage.getItem("codeTheme") || "Dracula";
+    return localStorage.getItem("codeTheme") || "Sunset";
   });
   
   useEffect(() => {
